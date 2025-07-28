@@ -1,0 +1,39 @@
+---
+- name: Install and configure fail2ban
+  hosts: homeserver
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install fail2ban package
+      ansible.builtin.apt:
+        name: fail2ban
+        state: present
+        update_cache: true
+
+    - name: Ensure fail2ban service is enabled and started
+      ansible.builtin.service:
+        name: fail2ban
+        state: started
+        enabled: true
+
+    - name: Deploy basic fail2ban jail.local configuration
+      ansible.builtin.copy:
+        dest: /etc/fail2ban/jail.local
+        content: |
+          [sshd]
+          enabled = true
+          maxretry = 5
+          bantime = 3600
+          findtime = 600
+          backend = systemd
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart fail2ban
+
+  handlers:
+    - name: Restart fail2ban
+      ansible.builtin.service:
+        name: fail2ban
+        state: restarted

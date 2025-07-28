@@ -1,0 +1,32 @@
+---
+- name: Deploy Syncthing with Docker
+  hosts: homeserver
+  become: true
+  gather_facts: true
+
+  vars:
+    syncthing_data_dir: /srv/data/syncthing
+    syncthing_http_port: 8384
+
+  tasks:
+    - name: Ensure Syncthing data directory exists
+      ansible.builtin.file:
+        path: "{{ syncthing_data_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Run Syncthing Docker container
+      community.docker.docker_container:
+        name: syncthing
+        image: syncthing/syncthing:latest
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ syncthing_http_port }}:8384"
+          - "22000:22000/tcp"
+          - "22000:22000/udp"
+          - "21027:21027/udp"
+        volumes:
+          - "{{ syncthing_data_dir }}:/var/syncthing"

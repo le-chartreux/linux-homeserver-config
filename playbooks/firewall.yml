@@ -1,0 +1,22 @@
+---
+- name: Configure basic firewall with UFW
+  hosts: homeserver
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install UFW
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+        update_cache: true
+
+    - name: Allow SSH through the firewall
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Set default deny incoming policy
+      community.general.ufw:
+        state: enabled
+        policy: deny

@@ -1,0 +1,27 @@
+[project]
+
+name = "linux-homeserver-config"
+description = "Configuration of my Linux homeserver."
+authors = [
+    { name = "Nathan Rousseau", email = "le-chartreux-vert@protonmail.com" },
+]
+keywords = ["linux", "configuration", "fedora", "ansible"]
+requires-python = ">=3.13"
+dependencies = ["ansible>=11.4.0"]
+
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/le-chartreux/linux-homeserver-config.git"
+Issues = "https://github.com/le-chartreux/linux-homeserver-config/issues"
+
+[project.optional-dependencies]
+dev = ["argcomplete>=3.6.1"]
+
+
+[tool.setuptools_scm]
+# this section should exist even if it is empty to allow setuptools_scm to work
+
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"

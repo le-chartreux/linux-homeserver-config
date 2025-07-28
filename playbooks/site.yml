@@ -1,0 +1,15 @@
+---
+- name: Run all the playbooks
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+- import_playbook: update.yml
+- import_playbook: firewall.yml
+- import_playbook: ssh_hardening.yml
+- import_playbook: fail2ban.yml
+- import_playbook: avahi.yml
+- import_playbook: create_data_dir.yml
+- import_playbook: docker.yml
+- import_playbook: syncthing.yml
+- import_playbook: baikal.yml

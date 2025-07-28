@@ -1,0 +1,33 @@
+---
+- name: Deploy Baikal with Docker
+  hosts: homeserver
+  become: true
+  gather_facts: true
+
+  vars:
+    baikal_data_dir: /srv/data/baikal
+    baikal_http_port: 8586
+
+  tasks:
+    - name: Ensure Baikal data directories exist
+      ansible.builtin.file:
+        path: "{{ baikal_data_dir }}/{{ item }}"
+        state: directory
+        owner: 33
+        group: 33
+        mode: '0755'
+      loop:
+        - Specific
+        - config
+
+    - name: Run Baikal container
+      community.docker.docker_container:
+        name: baikal
+        image: ckulka/baikal:nginx
+        restart_policy: unless-stopped
+        state: started
+        ports:
+          - "{{ baikal_http_port }}:80"
+        volumes:
+          - "{{ baikal_data_dir }}/Specific:/var/www/baikal/Specific"
+          - "{{ baikal_data_dir }}/config:/var/www/baikal/config"

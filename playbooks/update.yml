@@ -1,0 +1,25 @@
+---
+- name: Update and upgrade the system
+  hosts: homeserver
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Upgrade all packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Check if reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_flag
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Reboot triggered by Ansible"
+        reboot_timeout: 600
+      when: reboot_flag.stat.exists
